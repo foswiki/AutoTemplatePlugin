@@ -151,7 +151,7 @@ The following settings can be defined in configure
    * Set SHORTDESCRIPTION = Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE
 -->
 |  Plugin Author: | Foswiki:Main.MichaelDaum |
-|  Copyright: | &copy; 2008-2011, Oliver Kr&uuml;ger, Michael Daum |
+|  Copyright: | &copy; 2008-2014, Oliver Kr&uuml;ger, Michael Daum |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |

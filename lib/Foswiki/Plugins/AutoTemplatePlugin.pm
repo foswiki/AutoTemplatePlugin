@@ -1,6 +1,6 @@
 # Plugin for Foswiki
 #
-# Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
+# Copyright (C) 2008-2014 Oliver Krueger <oliver@wiki-one.net>
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,7 +14,7 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '$Rev: 5221 $';
+our $VERSION = '2.01';
 our $RELEASE = '2.01';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
