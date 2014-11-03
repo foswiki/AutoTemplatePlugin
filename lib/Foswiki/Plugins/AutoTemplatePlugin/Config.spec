@@ -1,5 +1,5 @@
 # ---+ Extensions
-# ---++ AutoTemplate settings
+# ---++ AutoTemplatePlugin
 # This is the configuration used by the <b>AutoTemplatePlugin</b>.
 
 # **BOOLEAN**

@@ -14,8 +14,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '2.01';
-our $RELEASE = '2.01';
+our $VERSION = '3.00';
+our $RELEASE = '3.00';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -31,7 +31,6 @@ sub initPlugin {
     }
 
     # get configuration
-    my $modeList = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} || "rules, exist";
     my $override = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} || 0;
     $debug = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Debug} || 0;
 
@@ -55,17 +54,7 @@ sub initPlugin {
     }
 
     # get it
-    my $templateName = "";
-    foreach my $mode (split(/\s*,\s*/, $modeList)) {
-      if ( $mode eq "section" ) {
-        $templateName = _getTemplateFromSectionInclude( $web, $topic );
-      } elsif ( $mode eq "exist" ) {
-        $templateName = _getTemplateFromTemplateExistence( $web, $topic );
-      } elsif ( $mode eq "rules" ) {
-        $templateName = _getTemplateFromRules( $web, $topic );
-      }
-      last if $templateName;
-    }
+    my $templateName = getTemplateName($web, $topic);
 
     # only set the view template if there is anything to set
     return 1 unless $templateName;
@@ -96,6 +85,25 @@ sub initPlugin {
 
     # Plugin correctly initialized
     return 1;
+}
+
+sub getTemplateName {
+    my ($web, $topic) = @_;
+
+    my $templateName = "";
+    my $modeList = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} || "rules, exist";
+    foreach my $mode (split(/\s*,\s*/, $modeList)) {
+      if ( $mode eq "section" ) {
+        $templateName = _getTemplateFromSectionInclude( $web, $topic );
+      } elsif ( $mode eq "exist" ) {
+        $templateName = _getTemplateFromTemplateExistence( $web, $topic );
+      } elsif ( $mode eq "rules" ) {
+        $templateName = _getTemplateFromRules( $web, $topic );
+      }
+      last if $templateName;
+    }
+
+    return $templateName;
 }
 
 sub _getFormName {

@@ -156,6 +156,7 @@ The following settings can be defined in configure
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  03 Nov 2014: | implemented public API to get the auto-assigned template |
 |  25 Aug 2011: | added more default views for tools in the System web |
 |  05 Apr 2011: | added VIEW_TEMPLATE_RULES, EDIT_TEMPLATE_RULES preference variables | 
 |  09 Nov 2010: | added defaults to ease templating !ChangePassword, !SiteChanges, !WebIndex |
@@ -178,4 +179,3 @@ The following settings can be defined in configure
 |  Other Dependencies: | none |
 |  Home: | Foswiki:Extensions/%TOPIC% |
 |  Support: | Foswiki:Extensions/%TOPIC% |
-
