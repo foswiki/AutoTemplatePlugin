@@ -1,6 +1,7 @@
 # Plugin for Foswiki
 #
-# Copyright (C) 2008-2014 Oliver Krueger <oliver@wiki-one.net>
+# Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
+# Copyright (C) 2008-2015 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -14,12 +15,11 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '3.00';
-our $RELEASE = '3.00';
+our $VERSION = '4.00';
+our $RELEASE = '4.00';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
-our $isEditAction;
 
 sub initPlugin {
     my( $topic, $web, $user, $installWeb ) = @_;
@@ -35,7 +35,7 @@ sub initPlugin {
     $debug = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Debug} || 0;
 
     # is this an edit action?
-    $isEditAction   = Foswiki::Func::getContext()->{edit};
+    my $isEditAction   = Foswiki::Func::getContext()->{edit};
     my $templateVar = $isEditAction?'EDIT_TEMPLATE':'VIEW_TEMPLATE';
 
     # back off if there is a view template already and we are not in override mode
@@ -109,9 +109,12 @@ sub getTemplateName {
 sub _getFormName {
     my ($web, $topic) = @_;
 
+    my $request = Foswiki::Func::getCgiQuery();
+    my $form = $request->param("formtemplate");
+    return $form if defined $form && $form ne '';
+
     my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
 
-    my $form;
     $form = $meta->get("FORM") if $meta;
     $form = $form->{"name"} if $form;
 
@@ -129,6 +132,7 @@ sub _getTemplateFromSectionInclude {
     my ($formweb, $formtopic) = Foswiki::Func::normalizeWebTopicName($web, $formName);
 
     # SMELL: This can be done much faster, if the formdefinition topic is read directly
+    my $isEditAction   = Foswiki::Func::getContext()->{edit};
     my $sectionName = $isEditAction?'edittemplate':'viewtemplate';
     my $templateName = "%INCLUDE{ \"$formweb.$formtopic\" section=\"$sectionName\"}%";
     $templateName = Foswiki::Func::expandCommonVariables( $templateName, $topic, $web );
@@ -141,6 +145,7 @@ sub _getTemplateFromTemplateExistence {
     my ($web, $topic) = @_;
 
     my $formName = _getFormName($web, $topic);
+    my $isEditAction   = Foswiki::Func::getContext()->{edit}?1:0;
     return unless $formName;
 
     writeDebug("called _getTemplateFromTemplateExistence($formName, $topic, $web)");
@@ -160,6 +165,7 @@ sub _getTemplateFromRules {
     writeDebug("called _getTemplateFromRules($web, $topic)");
 
     # read template rules from preferences
+    my $isEditAction   = Foswiki::Func::getContext()->{edit};
     my $rules = Foswiki::Func::getPreferencesValue(
       $isEditAction?'EDIT_TEMPLATE_RULES':'VIEW_TEMPLATE_RULES');
 
