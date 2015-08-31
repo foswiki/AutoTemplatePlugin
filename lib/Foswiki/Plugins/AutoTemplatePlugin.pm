@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '4.00';
-our $RELEASE = '4.00';
+our $VERSION = '4.01';
+our $RELEASE = '4.01';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -134,7 +134,7 @@ sub _getTemplateFromSectionInclude {
     # SMELL: This can be done much faster, if the formdefinition topic is read directly
     my $isEditAction   = Foswiki::Func::getContext()->{edit};
     my $sectionName = $isEditAction?'edittemplate':'viewtemplate';
-    my $templateName = "%INCLUDE{ \"$formweb.$formtopic\" section=\"$sectionName\"}%";
+    my $templateName = "%INCLUDE{ \"$formweb.$formtopic\" section=\"$sectionName\" warn=\"off\"}%";
     $templateName = Foswiki::Func::expandCommonVariables( $templateName, $topic, $web );
 
     return $templateName;

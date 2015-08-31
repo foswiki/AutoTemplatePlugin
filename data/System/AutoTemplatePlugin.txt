@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1407719212" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" date="1441015297" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
 
 %SHORTDESCRIPTION%
@@ -156,6 +156,7 @@ The following settings can be defined in configure
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  31 Aug 2015: | ignore invalid template warning when section not found |
 |  17 Jul 2015: | fixed auto-templating of topics being created; fixed auto-templating when the !DataForm is changed during edit |
 |  03 Nov 2014: | implemented public API to get the auto-assigned template |
 |  25 Aug 2011: | added more default views for tools in the System web |
