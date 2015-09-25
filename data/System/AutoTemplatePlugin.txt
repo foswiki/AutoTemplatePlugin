@@ -1,6 +1,5 @@
 %META:TOPICINFO{author="ProjectContributor" date="1441015297" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
-
 %SHORTDESCRIPTION%
 
 %IF{"context 'AutoViewTemplatePluginEnabled' and context 'AutoTemplatePluginEnabled'"
@@ -16,7 +15,7 @@
 
 ---++ Description
 
-This plugin sets the VIEW_TEMPLATE and EDIT_TEMPLATE variables according to a
+This plugin sets the VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE variables according to a
 corresponding form or rule. For example, when you attach a new form to a topic, this
 plugin will enable the corresponding view/edit template automatically.  This
 comes in very handy for applications where users create new topics
@@ -62,13 +61,13 @@ You have a form called =PurchaseRequestForm=. The plugin will now search for
 ---+++ Mode "section"
 
 A topic with a =MyForm= will be displayed/editted using the template name
-stored in the named section =viewtemplate/edittemplate= . For example given the
+stored in the named section =viewtemplate=, =edittemplate=, =printtemplate=. For example given the
 =MyForm= form definition topic contains a section =viewtemplate= whose only
 content is =MyOtherView=, then this will be used to view the topic. Likewise,
 the content of the =edittemplate= section in =MyForm= will read to find the
 edit template.
 
-By default existing values for VIEW_TEMPLATE and EDIT_TEMPLATE have priority.
+By default existing values for VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE have priority.
 You can change this behaviour in =configure= so that the form defined templates
 have priority.
 
@@ -84,6 +83,8 @@ Below this we place the two sections that defines the templates to be used. Note
 %STARTSECTION{"viewtemplate"}%ViewFormAtTopTemplate%ENDSECTION{"viewtemplate"}%
 
 %STARTSECTION{"edittemplate"}%EditPurchaseRequest%ENDSECTION{"edittemplate"}% 
+
+%STARTSECTION{"printtemplate"}%PrintPurchaseRequest%ENDSECTION{"printtemplate"}% 
 </verbatim>
 
 
@@ -139,23 +140,18 @@ The following settings can be defined in configure
                                            =rules= for defining the template using the two rule sets below | Default: =rules, exist= | 
 | {Plugins}{AutoTemplatePlugin}{ViewTemplateRules} | hash of =&lt;pattern>= => '&lt;template name>' rules to be used for =view= | |
 | {Plugins}{AutoTemplatePlugin}{EditTemplateRules} | hash of =&lt;pattern>= => '&lt;template name>' rules to be used for =edit= | |
+| {Plugins}{AutoTemplatePlugin}{PrintTemplateRules} | hash of =&lt;pattern>= => '&lt;template name>' rules to be used when printing or exporting to pdf | |
 
----++ Plugin Installation Instructions
-
+---++ Installation Instructions
 %$INSTALL_INSTRUCTIONS%
 
+---++ Dependencies
+%$DEPENDENCIES%
 
----++ Plugin Info
+---++ Change History
 
-<!--
-   * Set SHORTDESCRIPTION = Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE
--->
-|  Plugin Author: | Foswiki:Main.MichaelDaum |
-|  Copyright: | &copy; 2008-2015, Oliver Kr&uuml;ger, Michael Daum |
-|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
-|  Release: | %$RELEASE% |
-|  Version: | %$VERSION% |
-|  Change History: | <!-- versions below in reverse order -->&nbsp; |
+%TABLE{columnwidths="7em" tablewidth="100%"}%
+|  25 Sep 2015: | added support for PRINT_TEMPLATE |
 |  31 Aug 2015: | ignore invalid template warning when section not found |
 |  17 Jul 2015: | fixed auto-templating of topics being created; fixed auto-templating when the !DataForm is changed during edit |
 |  03 Nov 2014: | implemented public API to get the auto-assigned template |
@@ -176,8 +172,17 @@ The following settings can be defined in configure
                   fixed view templates in subwebs (MD) |
 |  04 Sep 2007: | Added build script and installer, minor doc changes |
 |  05 Jun 2007: | Initial version |
-|  Foswiki Dependency: | $Foswiki::Plugins::VERSION 1.026 |
-|  CPAN Dependencies: | none |
-|  Other Dependencies: | none |
-|  Home: | Foswiki:Extensions/%TOPIC% |
-|  Support: | Foswiki:Extensions/%TOPIC% |
+
+<!--
+   * Set SHORTDESCRIPTION = Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE
+-->
+
+%META:FORM{name="PackageForm"}%
+%META:FIELD{name="Author" title="Author" value="Foswiki:Main.MichaelDaum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2015, Oliver Kr&uuml;ger, Michael Daum"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/AutoTemplatePlugin"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%TOPIC%"}%
+%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%

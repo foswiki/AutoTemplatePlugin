@@ -21,8 +21,8 @@ $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} = 0;
 # </ul>
 $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} = 'rules, exist';
 
-# **PERL LABEL="ViewTemplate Rules"**
-# Rule set used to derive the view template name. This is a list of rules of the form
+# **PERL LABEL="ViewTemplate Rules" CHECK="undefok emptyok"**
+# Rules to derive the view template name. This is a list of rules of the form
 # <code>'pattern' => 'template'</code>. The current topic is matched against each of the
 # patterns in the given order. The first matching pattern determines the concrete view template.
 $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{ViewTemplateRules} = {
@@ -43,10 +43,14 @@ $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{ViewTemplateRules} = {
   'WikiUsers' => 'WikiUsersView',
 };
 
-# **PERL LABEL="EditTemplate Rules"**
-# Rule set used to derive the edit template name. The format is the same as for the <code>{ViewTempalteRules}</code>
+# **PERL LABEL="EditTemplate Rules" CHECK="undefok emptyok"**
+# Rules to derive the edit template name. The format is the same as for the <code>{ViewTempalteRules}</code>
 # configuration. This rule set is used during edit.
-$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{EditTemplateRules} = {
-};
+$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{EditTemplateRules} = { };
+
+# **PERL LABEL="PrintTemplate Rules" CHECK="undefok emptyok"**
+# Rules to set the print template when exporting PDF or the like. The format is the same as for the <code>{ViewTempalteRules}</code>
+# configuration. 
+$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{PrintTemplateRules} = { };
 
 1;
