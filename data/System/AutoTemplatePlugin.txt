@@ -174,7 +174,7 @@ The following settings can be defined in configure
 |  05 Jun 2007: | Initial version |
 
 <!--
-   * Set SHORTDESCRIPTION = Automatically sets VIEW_TEMPLATE and EDIT_TEMPLATE
+   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
 -->
 
 %META:FORM{name="PackageForm"}%
