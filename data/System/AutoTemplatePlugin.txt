@@ -1,6 +1,6 @@
 %META:TOPICINFO{author="ProjectContributor" date="1441015297" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
-%SHORTDESCRIPTION%
+%FORMFIELD{"Description"}%
 
 %IF{"context 'AutoViewTemplatePluginEnabled' and context 'AutoTemplatePluginEnabled'"
   then="<div class='foswikiAlert'>
@@ -173,16 +173,13 @@ The following settings can be defined in configure
 |  04 Sep 2007: | Added build script and installer, minor doc changes |
 |  05 Jun 2007: | Initial version |
 
-<!--
-   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
--->
-
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Foswiki:Main.MichaelDaum"}%
 %META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2015, Oliver Kr&uuml;ger, Michael Daum"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/AutoTemplatePlugin"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%TOPIC%"}%
 %META:FIELD{name="Version" title="Version" value="%$VERSION%"}%
