@@ -151,6 +151,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  13 Oct 2015: | bail out early when not in view, edit or print mode |
 |  25 Sep 2015: | added support for PRINT_TEMPLATE |
 |  31 Aug 2015: | ignore invalid template warning when section not found |
 |  17 Jul 2015: | fixed auto-templating of topics being created; fixed auto-templating when the !DataForm is changed during edit |

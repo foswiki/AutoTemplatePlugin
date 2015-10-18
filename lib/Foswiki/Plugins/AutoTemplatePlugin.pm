@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '5.00';
-our $RELEASE = '25 Sep 2015';
+our $VERSION = '5.10';
+our $RELEASE = '13 Oct 2015';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -31,8 +31,11 @@ sub initPlugin {
     my $override = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} || 0;
     $debug = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Debug} || 0;
 
+
     # is this an edit action?
-    my $templateVar = _isEditAction()?'EDIT_TEMPLATE':_isPrintAction()?'PRINT_TEMPLATE':'VIEW_TEMPLATE';
+    my $templateVar = _isEditAction()?'EDIT_TEMPLATE':_isViewAction()?'VIEW_TEMPLATE':_isPrintAction()?'PRINT_TEMPLATE':undef;
+
+    return 1 unless $templateVar;
 
     # back off if there is a view template already and we are not in override mode
     my $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
@@ -138,9 +141,8 @@ sub _getTemplateFromSectionInclude {
     my $templateName = "%INCLUDE{ \"$formweb.$formtopic\" section=\"$sectionName\" warn=\"off\"}%";
     $templateName = Foswiki::Func::expandCommonVariables( $templateName, $topic, $web );
 
-    return $templateName if _templateExists($templateName);
-
-    return undef;
+    return undef unless _templateExists($templateName);
+    return $templateName;
 }
 
 sub _isPrintAction {
@@ -148,6 +150,10 @@ sub _isPrintAction {
     my $contentType  = $request->param("contenttype") || '';
     my $cover  = $request->param("cover") || '';
     return $contentType eq 'application/pdf' || $cover =~ /print/ ? 1:0;
+}
+
+sub _isViewAction {
+    return Foswiki::Func::getContext()->{view}?1:0;
 }
 
 sub _isEditAction {
@@ -182,9 +188,8 @@ sub _getTemplateFromTemplateExistence {
     $templateName =~ s/Form$//;
     $templateName .= ucfirst($action);
 
-
-    return $templateName if _templateExists($templateName);
-    return undef;
+    return undef unless _templateExists($templateName);
+    return $templateName;
 }
 
 sub _getTemplateFromRules {
