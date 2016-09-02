@@ -1,7 +1,7 @@
 # Plugin for Foswiki
 #
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2015 Foswiki Contributors
+# Copyright (C) 2008-2016 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '5.10';
-our $RELEASE = '13 Oct 2015';
+our $VERSION = '5.11';
+our $RELEASE = '01 Sep 2016';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -39,6 +39,10 @@ sub initPlugin {
 
     # back off if there is a view template already and we are not in override mode
     my $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
+    return 1 if $currentTemplate && !$override;
+
+    my $request = Foswiki::Func::getCgiQuery();
+    $currentTemplate = $request->param("template");
     return 1 if $currentTemplate && !$override;
 
     # check if this is a new topic and - if so - try to derive the templateName from

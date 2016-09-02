@@ -151,6 +151,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  01 Sep 2016: | do not override the template url param |
 |  13 Oct 2015: | bail out early when not in view, edit or print mode |
 |  25 Sep 2015: | added support for PRINT_TEMPLATE |
 |  31 Aug 2015: | ignore invalid template warning when section not found |
@@ -176,7 +177,7 @@ The following settings can be defined in configure
 
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Foswiki:Main.MichaelDaum"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2015, Oliver Kr&uuml;ger, Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2016, Oliver Kr&uuml;ger, Michael Daum"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%

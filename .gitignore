@@ -1,8 +1,8 @@
 *.swp
-AutoTemplatePlugin.md5
-AutoTemplatePlugin.sha1
-AutoTemplatePlugin.tgz
-AutoTemplatePlugin.txt
-AutoTemplatePlugin.zip
-AutoTemplatePlugin_installer
-AutoTemplatePlugin_installer.pl
+/AutoTemplatePlugin.md5
+/AutoTemplatePlugin.sha1
+/AutoTemplatePlugin.tgz
+/AutoTemplatePlugin.txt
+/AutoTemplatePlugin.zip
+/AutoTemplatePlugin_installer
+/AutoTemplatePlugin_installer.pl
