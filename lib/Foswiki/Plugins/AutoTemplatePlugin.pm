@@ -1,7 +1,7 @@
 # Plugin for Foswiki
 #
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2016 Foswiki Contributors
+# Copyright (C) 2008-2017 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '5.11';
-our $RELEASE = '01 Sep 2016';
+our $VERSION = '5.20';
+our $RELEASE = '16 Jan 2017';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -33,9 +33,7 @@ sub initPlugin {
 
 
     # is this an edit action?
-    my $templateVar = _isEditAction()?'EDIT_TEMPLATE':_isViewAction()?'VIEW_TEMPLATE':_isPrintAction()?'PRINT_TEMPLATE':undef;
-
-    return 1 unless $templateVar;
+    my $templateVar = _isEditAction()?'EDIT_TEMPLATE':_isPrintAction()?'PRINT_TEMPLATE':'VIEW_TEMPLATE';
 
     # back off if there is a view template already and we are not in override mode
     my $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
@@ -154,10 +152,6 @@ sub _isPrintAction {
     my $contentType  = $request->param("contenttype") || '';
     my $cover  = $request->param("cover") || '';
     return $contentType eq 'application/pdf' || $cover =~ /print/ ? 1:0;
-}
-
-sub _isViewAction {
-    return Foswiki::Func::getContext()->{view}?1:0;
 }
 
 sub _isEditAction {
