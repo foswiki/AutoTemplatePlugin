@@ -1,7 +1,7 @@
 # Plugin for Foswiki
 #
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2017 Foswiki Contributors
+# Copyright (C) 2008-2018 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '5.20';
-our $RELEASE = '16 Jan 2017';
+our $VERSION = '6.00';
+our $RELEASE = '25 May 2018';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -31,7 +31,6 @@ sub initPlugin {
     my $override = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} || 0;
     $debug = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Debug} || 0;
 
-
     # is this an edit action?
     my $templateVar = _isEditAction()?'EDIT_TEMPLATE':_isPrintAction()?'PRINT_TEMPLATE':'VIEW_TEMPLATE';
 
@@ -39,7 +38,7 @@ sub initPlugin {
     my $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
     return 1 if $currentTemplate && !$override;
 
-    my $request = Foswiki::Func::getCgiQuery();
+    my $request = Foswiki::Func::getRequestObject();
     $currentTemplate = $request->param("template");
     return 1 if $currentTemplate && !$override;
 
@@ -58,7 +57,10 @@ sub initPlugin {
     my $templateName = getTemplateName($web, $topic);
 
     # only set the view template if there is anything to set
-    return 1 unless $templateName;
+    unless ($templateName) {
+      writeDebug("... no template");
+      return 1;
+    }
 
     # in edit mode, try to read the template to check if it exists
     if (_isEditAction() && !Foswiki::Func::readTemplate($templateName)) {
@@ -70,12 +72,12 @@ sub initPlugin {
     if ($debug) {
       if ( $currentTemplate ) {
         if ( $override ) {
-          writeDebug("$templateVar already set, overriding with: $templateName");
+          writeDebug("... $templateVar already set, overriding with: $templateName");
         } else {
-          writeDebug("$templateVar not changed/set");
+          writeDebug("... $templateVar not changed/set");
         }
       } else {
-        writeDebug("$templateVar set to: $templateName");
+        writeDebug("... $templateVar set to $templateName");
       }
     }
     $templateVar =~ s/^PRINT_/VIEW_/g; #sneak in VIEW again
@@ -95,14 +97,17 @@ sub getTemplateName {
     $action ||= _isEditAction()?'edit':_isPrintAction()?'print':'view';
 
     my $templateName = "";
-    my $modeList = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} || "rules, exist";
+    my $modeList = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} || "rules, exist, type";
+    writeDebug("modeList='$modeList'");
     foreach my $mode (split(/\s*,\s*/, $modeList)) {
-      if ( $mode eq "section" ) {
-        $templateName = _getTemplateFromSectionInclude( $web, $topic, $action );
+      if ( $mode eq "rules" ) {
+        $templateName = _getTemplateFromRules( $web, $topic, $action );
+      } elsif ( $mode eq "type" ) {
+        $templateName = _getTemplateFromTopicType( $web, $topic, $action );
       } elsif ( $mode eq "exist" ) {
         $templateName = _getTemplateFromTemplateExistence( $web, $topic, $action );
-      } elsif ( $mode eq "rules" ) {
-        $templateName = _getTemplateFromRules( $web, $topic, $action );
+      } elsif ( $mode eq "section" ) {
+        $templateName = _getTemplateFromSectionInclude( $web, $topic, $action );
       }
       last if $templateName;
     }
@@ -114,24 +119,36 @@ sub getTemplateName {
 }
 
 sub _getFormName {
-    my ($web, $topic) = @_;
+    my ($web, $topic, $meta) = @_;
 
-    my $request = Foswiki::Func::getCgiQuery();
-    my $form = $request->param("formtemplate");
-    return $form if defined $form && $form ne '';
+    ($meta) = Foswiki::Func::readTopic( $web, $topic ) unless defined $meta;
 
-    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
-
-    $form = $meta->get("FORM") if $meta;
+    my $form = $meta->get("FORM") if $meta;
     $form = $form->{"name"} if $form;
 
     return $form;
 }
 
+sub _getTopicType {
+    my ($web, $topic, $meta) = @_;
+
+    ($meta) = Foswiki::Func::readTopic( $web, $topic ) unless defined $meta;
+
+    my $topicType = $meta->get("FIELD", "TopicType");
+    return unless $topicType;
+
+    $topicType = $topicType->{value};
+    $topicType =~ s/^\s+|\s+$//g;
+
+    return split(/\s*,\s*/, $topicType);
+}
+
 sub _getTemplateFromSectionInclude {
     my ($web, $topic, $action) = @_;
 
-    my $formName = _getFormName($web, $topic);
+    my $request = Foswiki::Func::getRequestObject();
+    my $formName = $request->param("formtemplate");
+    $formName = _getFormName($web, $topic) unless defined $formName && $formName ne '';
     return unless $formName;
 
     writeDebug("called _getTemplateFromSectionInclude($formName, $topic, $web)");
@@ -143,12 +160,12 @@ sub _getTemplateFromSectionInclude {
     my $templateName = "%INCLUDE{ \"$formweb.$formtopic\" section=\"$sectionName\" warn=\"off\"}%";
     $templateName = Foswiki::Func::expandCommonVariables( $templateName, $topic, $web );
 
-    return undef unless _templateExists($templateName);
+    return unless _templateExists($templateName);
     return $templateName;
 }
 
 sub _isPrintAction {
-    my $request = Foswiki::Func::getCgiQuery();
+    my $request = Foswiki::Func::getRequestObject();
     my $contentType  = $request->param("contenttype") || '';
     my $cover  = $request->param("cover") || '';
     return $contentType eq 'application/pdf' || $cover =~ /print/ ? 1:0;
@@ -171,22 +188,70 @@ sub _templateExists {
     return $knownTemplate{$name};
 }
 
+# get the most specific view for the given topic type
+sub _getTemplateFromTopicType {
+    my ( $web, $topic, $action ) = @_;
+
+    writeDebug("called _getTemplateFromTopicType($web, $topic)");
+
+    my @topicType = _getTopicType($web, $topic);
+    return unless @topicType;
+
+    my $templateName;
+
+    # is it a stub itself use existence
+    if (grep {/\bTopicStub\b/} @topicType) {
+      $templateName = _getTemplateFromTemplateExistence($web, $topic, $action);
+    }
+
+    unless ($templateName) {
+      foreach my $type (@topicType) {
+        next unless Foswiki::Func::topicExists($web, $type);
+        my ($meta) = Foswiki::Func::readTopic($web, $type);
+
+        my $formName;
+        if (grep {/\bTopicStub\b/} _getTopicType($web, $type, $meta)) {
+          my $target = $meta->get("FIELD", "Target");
+          $formName = $target->{value} if $target;
+        } else {
+          $formName = $type;
+        }
+
+        $templateName = _getTemplateOfForm($web, $formName, $action);
+        last if _templateExists($templateName);
+      }
+    }
+
+    writeDebug("... found template $templateName") if $templateName;
+
+    return $templateName;
+}
+
+sub _getTemplateOfForm {
+    my ( $web, $formName, $action ) = @_;
+
+    my ( $templateWeb, $templateTopic ) = Foswiki::Func::normalizeWebTopicName( $web, $formName );
+
+    $templateWeb =~ s/\//\./g;
+    my $templateName = $templateWeb . '.' . $templateTopic;
+    $templateName =~ s/Form$//;
+    $templateName .= ucfirst($action);
+
+    return $templateName;
+}
+
 # replaces Web.MyForm with Web.MyViewTemplate and returns Web.MyViewTemplate if it exists otherwise nothing
 sub _getTemplateFromTemplateExistence {
     my ($web, $topic, $action) = @_;
 
-    my $formName = _getFormName($web, $topic);
+    my $request = Foswiki::Func::getRequestObject();
+    my $formName = $request->param("formtemplate");
+    $formName = _getFormName($web, $topic) unless defined $formName && $formName ne '';
     return unless $formName;
 
-    writeDebug("called _getTemplateFromTemplateExistence($formName, $topic, $web)");
-    my ($templateWeb, $templateTopic) = Foswiki::Func::normalizeWebTopicName($web, $formName);
+    my $templateName = _getTemplateOfForm($web, $formName, $action);
 
-    $templateWeb =~ s/\//\./go;
-    my $templateName = $templateWeb.'.'.$templateTopic;
-    $templateName =~ s/Form$//;
-    $templateName .= ucfirst($action);
-
-    return undef unless _templateExists($templateName);
+    return unless _templateExists($templateName);
     return $templateName;
 }
 

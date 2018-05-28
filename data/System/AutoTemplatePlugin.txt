@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1441015297" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" date="1527500673" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -9,7 +9,6 @@
     Please uninstall one or the other.
     </strong></div>"
 }%
-
 
 %TOC%
 
@@ -31,8 +30,9 @@ There are three base strategies on how the name of the template is derived:
    1 =exist= 
    1 =section=
    1 =rules=
+   1 =type=
 
-These can be combined in a priorized list defaulting to =rules, exist=.
+These can be combined in a priorized list defaulting to =rules, exist, type=.
 This will try each strategy in the given order until a matching view template
 is found.
 
@@ -46,7 +46,7 @@ strategy to use with a priority of modes (see below).
 
 ---+++ Mode "exist"
 
-A topic that has a =MyForm= <nop>WikiForm attached to it, will be displayed
+A topic that has a =MyForm= <nop>DataForm attached to it, will be displayed
 using the view template =MyView= and editted using the =MyEdit=
 if they exist. The template name is derived by stripping off the suffix
 =...Form= from the form name and appending =...View=. The Wiki engine will
@@ -57,6 +57,43 @@ Examples:
 
 You have a form called =PurchaseRequestForm=. The plugin will now search for 
 =PurchaseRequestViewTemplate=, and =PurchaseRequestEditTemplate=.
+
+---+++ Mode "type"
+
+This is in effect an extended version of the "exist" rule with the difference that it uses
+the =TopicType= formfield of a <nop>DataForm as standardized by the [[Foswiki:Extensions/WikiWorkbenchContrib][WikiWorkbench framework]].
+The core rule of this framework is: "All content shall be typed." This means that not only may a
+wiki topic have a <nop>DataForm attached to it. In addition, a certain minimal structure is imposed 
+by at least tree formfields:
+
+   * =TopicType=: the list of types a topic implements
+   * =TopicTitle=: the free-form title of a topic (i.e. not constraint by rules for <nop>WikiWords)
+   * =Summary=: a tagline or sub-title of a topic describing in more detail what the topic is about
+
+For this plugin only the =TopicType= is of interest to find an appropriate view-, edit or print template
+for a topic of a certain kind. The content of the =TopicType= formfield is a list of types ordered
+from most specific to least specific. 
+
+For example the type =OrganizationTopic, <nop>PartyTopic, <nop>CategorizedTopic, <nop>WikiTopic= 
+is expressing that any topic of that type is finally an =OrganizationTopic=, which are a more specific kind of =PartyTopic=,
+which in turn is able to be categorized (using the [[Foswiki:Extensions/ClassificationPlugin][ClassificationPlugin]]),
+while all topics are at least a =WikiTopic=. Note that there is only a single <nop>DataForm attached to an
+=OrganizationTopic=. However it combines all properties of all sub types into one <nop>DataForm.
+
+When <nop>AutoTemplatePlugin evalutes the =type= rule by processing the list of <nop>TopicTypes left to right
+looking for an appropriate template. In above example this would check the existence of =OrganizationTopicViewTemplate=,
+=PartyTopicViewTemplate=, =CategorizedTopicViewTemplate= and =WikiTopicViewTemplate=. The first on found will
+be used.
+
+This lets us define a single =PartyTopicViewTemplate= that is used by =OrganizationTopics= as well as any other
+type derived from it, such as a =PersonTopic= which comes with a <nop>TopicType definition
+=PersonTopic, <nop>PartyTopic, <nop>CategorizedTopic, <nop>WikiTopic=. The two <nop>DataForms share a substantial
+part of formfields among each other as expressed by the overlapping items in the list of types. Therefore it makes
+sense to render both topics using a single view template.
+
+Actually in a real-world master data application you would render organizations and persons quite
+differently listing all contacts of an organization, which does not apply for a person contact. However both
+may be legal entities and have contact informations.
 
 ---+++ Mode "section"
 
@@ -86,7 +123,6 @@ Below this we place the two sections that defines the templates to be used. Note
 
 %STARTSECTION{"printtemplate"}%PrintPurchaseRequest%ENDSECTION{"printtemplate"}% 
 </verbatim>
-
 
 ---+++ Mode "rules"
 
@@ -151,6 +187,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  25 May 2018: | added "type" rule |
 |  16 Jan 2017: | always at least assign a view template |
 |  01 Sep 2016: | do not override the template url param |
 |  13 Oct 2015: | bail out early when not in view, edit or print mode |
@@ -178,11 +215,11 @@ The following settings can be defined in configure
 
 %META:FORM{name="PackageForm"}%
 %META:FIELD{name="Author" title="Author" value="Foswiki:Main.MichaelDaum"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2017, Oliver Kr&uuml;ger, Michael Daum"}%
-%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%TOPIC%"}%
-%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
-%META:FIELD{name="Release" title="Release" value="%$RELEASE%"}%
+%META:FIELD{name="Version" title="Version" value="%25$VERSION%25"}%
+%META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/AutoTemplatePlugin"}%
-%META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%TOPIC%"}%
-%META:FIELD{name="Version" title="Version" value="%$VERSION%"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2018, Oliver Kr&uuml;ger, Michael Daum"}%
+%META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
+%META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
+%META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%25TOPIC%25"}%
