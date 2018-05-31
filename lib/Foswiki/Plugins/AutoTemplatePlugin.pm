@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '6.00';
-our $RELEASE = '25 May 2018';
+our $VERSION = '6.01';
+our $RELEASE = '31 May 2018';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -113,7 +113,7 @@ sub getTemplateName {
     }
 
     # fall back to view for print template
-    return getTemplateName($web, $topic, "view") if !defined($templateName) && $action eq 'print';
+    $templateName = getTemplateName($web, $topic, "view") if !defined($templateName) && $action eq 'print';
 
     return $templateName;
 }
@@ -219,6 +219,7 @@ sub _getTemplateFromTopicType {
 
         $templateName = _getTemplateOfForm($web, $formName, $action);
         last if _templateExists($templateName);
+        $templateName = undef;
       }
     }
 

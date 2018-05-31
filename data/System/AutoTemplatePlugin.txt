@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1527500673" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" date="1527753803" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -187,6 +187,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  31 May 2018: | wrong template derived under certain conditions |
 |  25 May 2018: | added "type" rule |
 |  16 Jan 2017: | always at least assign a view template |
 |  01 Sep 2016: | do not override the template url param |
