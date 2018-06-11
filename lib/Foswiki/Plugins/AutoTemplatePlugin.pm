@@ -15,8 +15,8 @@ package Foswiki::Plugins::AutoTemplatePlugin;
 use strict;
 use warnings;
 
-our $VERSION = '6.01';
-our $RELEASE = '31 May 2018';
+our $VERSION = '6.02';
+our $RELEASE = '11 Jun 2018';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $debug;
@@ -58,13 +58,13 @@ sub initPlugin {
 
     # only set the view template if there is anything to set
     unless ($templateName) {
-      writeDebug("... no template");
+      _writeDebug("... no template");
       return 1;
     }
 
     # in edit mode, try to read the template to check if it exists
     if (_isEditAction() && !Foswiki::Func::readTemplate($templateName)) {
-      writeDebug("edit tempalte not found");
+      _writeDebug("edit tempalte not found");
       return 1;
     }
 
@@ -72,12 +72,12 @@ sub initPlugin {
     if ($debug) {
       if ( $currentTemplate ) {
         if ( $override ) {
-          writeDebug("... $templateVar already set, overriding with: $templateName");
+          _writeDebug("... $templateVar already set, overriding with: $templateName");
         } else {
-          writeDebug("... $templateVar not changed/set");
+          _writeDebug("... $templateVar not changed/set");
         }
       } else {
-        writeDebug("... $templateVar set to $templateName");
+        _writeDebug("... $templateVar set to $templateName");
       }
     }
     $templateVar =~ s/^PRINT_/VIEW_/g; #sneak in VIEW again
@@ -98,7 +98,7 @@ sub getTemplateName {
 
     my $templateName = "";
     my $modeList = $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} || "rules, exist, type";
-    writeDebug("modeList='$modeList'");
+    _writeDebug("modeList='$modeList'");
     foreach my $mode (split(/\s*,\s*/, $modeList)) {
       if ( $mode eq "rules" ) {
         $templateName = _getTemplateFromRules( $web, $topic, $action );
@@ -146,12 +146,13 @@ sub _getTopicType {
 sub _getTemplateFromSectionInclude {
     my ($web, $topic, $action) = @_;
 
+    _writeDebug("called _getTemplateFromSectionInclude($web, $topic, $action)");
+
+
     my $request = Foswiki::Func::getRequestObject();
     my $formName = $request->param("formtemplate");
     $formName = _getFormName($web, $topic) unless defined $formName && $formName ne '';
     return unless $formName;
-
-    writeDebug("called _getTemplateFromSectionInclude($formName, $topic, $web)");
 
     my ($formweb, $formtopic) = Foswiki::Func::normalizeWebTopicName($web, $formName);
 
@@ -164,35 +165,11 @@ sub _getTemplateFromSectionInclude {
     return $templateName;
 }
 
-sub _isPrintAction {
-    my $request = Foswiki::Func::getRequestObject();
-    my $contentType  = $request->param("contenttype") || '';
-    my $cover  = $request->param("cover") || '';
-    return $contentType eq 'application/pdf' || $cover =~ /print/ ? 1:0;
-}
-
-sub _isEditAction {
-    return Foswiki::Func::getContext()->{edit}?1:0;
-}
-
-sub _templateExists {
-    my $name = shift;
-
-    return unless defined $name;
-
-    unless (defined $knownTemplate{$name}) {
-      my $text = Foswiki::Func::readTemplate($name);
-      $knownTemplate{$name} = $text?1:0;
-    }
-
-    return $knownTemplate{$name};
-}
-
 # get the most specific view for the given topic type
 sub _getTemplateFromTopicType {
     my ( $web, $topic, $action ) = @_;
 
-    writeDebug("called _getTemplateFromTopicType($web, $topic)");
+    _writeDebug("called _getTemplateFromTopicType($web, $topic, $action)");
 
     my @topicType = _getTopicType($web, $topic);
     return unless @topicType;
@@ -223,20 +200,7 @@ sub _getTemplateFromTopicType {
       }
     }
 
-    writeDebug("... found template $templateName") if $templateName;
-
-    return $templateName;
-}
-
-sub _getTemplateOfForm {
-    my ( $web, $formName, $action ) = @_;
-
-    my ( $templateWeb, $templateTopic ) = Foswiki::Func::normalizeWebTopicName( $web, $formName );
-
-    $templateWeb =~ s/\//\./g;
-    my $templateName = $templateWeb . '.' . $templateTopic;
-    $templateName =~ s/Form$//;
-    $templateName .= ucfirst($action);
+    _writeDebug("... found template $templateName") if $templateName;
 
     return $templateName;
 }
@@ -244,6 +208,8 @@ sub _getTemplateOfForm {
 # replaces Web.MyForm with Web.MyViewTemplate and returns Web.MyViewTemplate if it exists otherwise nothing
 sub _getTemplateFromTemplateExistence {
     my ($web, $topic, $action) = @_;
+
+    _writeDebug("called _getTemplateFromTemplateExistence($web, $topic, $action)");
 
     my $request = Foswiki::Func::getRequestObject();
     my $formName = $request->param("formtemplate");
@@ -259,7 +225,7 @@ sub _getTemplateFromTemplateExistence {
 sub _getTemplateFromRules {
     my ($web, $topic, $action) = @_;
 
-    writeDebug("called _getTemplateFromRules($web, $topic)");
+    _writeDebug("called _getTemplateFromRules($web, $topic, $action)");
 
     # read template rules from preferences
     my $rules = Foswiki::Func::getPreferencesValue(uc($action."_TEMPLATE_RULES"));
@@ -303,9 +269,46 @@ sub _getTemplateFromRules {
     return;
 }
 
-sub writeDebug {
+sub _isPrintAction {
+    my $request = Foswiki::Func::getRequestObject();
+    my $contentType  = $request->param("contenttype") || '';
+    my $cover  = $request->param("cover") || '';
+    return $contentType eq 'application/pdf' || $cover =~ /print/ ? 1:0;
+}
+
+sub _isEditAction {
+    return Foswiki::Func::getContext()->{edit}?1:0;
+}
+
+sub _templateExists {
+    my $name = shift;
+
+    return unless defined $name;
+
+    unless (defined $knownTemplate{$name}) {
+      my $text = Foswiki::Func::readTemplate($name);
+      $knownTemplate{$name} = $text?1:0;
+    }
+
+    return $knownTemplate{$name};
+}
+
+sub _getTemplateOfForm {
+    my ( $web, $formName, $action ) = @_;
+
+    my ( $templateWeb, $templateTopic ) = Foswiki::Func::normalizeWebTopicName( $web, $formName );
+
+    $templateWeb =~ s/\//\./g;
+    my $templateName = $templateWeb . '.' . $templateTopic;
+    $templateName =~ s/Form$//;
+    $templateName .= ucfirst($action);
+
+    return $templateName;
+}
+
+
+sub _writeDebug {
     return unless $debug;
-    #Foswiki::Func::writeDebug("- AutoTemplatePlugin - $_[0]");
     print STDERR "- AutoTemplatePlugin - $_[0]\n";
 }
 

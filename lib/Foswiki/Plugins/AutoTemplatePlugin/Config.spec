@@ -18,8 +18,9 @@ $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} = 0;
 # <li> 'section': the template name is defined in a section in the form definition topic. </li>
 # <li> 'rules': the template name is defined using the below rule sets in <code>ViewTemplateRules</code>
 #      and <code>EditTemplateRules</code> </li>
+# <li> 'type': derive the template from the !TopicType formfield
 # </ul>
-$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} = 'rules, exist';
+$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Mode} = 'rules, exist, type';
 
 # **PERL LABEL="ViewTemplate Rules" CHECK="undefok emptyok"**
 # Rules to derive the view template name. This is a list of rules of the form

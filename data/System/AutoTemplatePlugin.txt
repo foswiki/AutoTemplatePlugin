@@ -187,6 +187,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  11 Jun 2018: | add =type= rule to default config |
 |  31 May 2018: | wrong template derived under certain conditions |
 |  25 May 2018: | added "type" rule |
 |  16 Jan 2017: | always at least assign a view template |
