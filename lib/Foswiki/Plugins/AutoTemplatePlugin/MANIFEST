@@ -1,4 +1,6 @@
 !noci
 data/System/AutoTemplatePlugin.txt 0644
 lib/Foswiki/Plugins/AutoTemplatePlugin/Config.spec 0644
+lib/Foswiki/Plugins/AutoTemplatePlugin/Core.pm 0644
+lib/Foswiki/Plugins/AutoTemplatePlugin/DEPENDENCIES 0644
 lib/Foswiki/Plugins/AutoTemplatePlugin.pm 0644

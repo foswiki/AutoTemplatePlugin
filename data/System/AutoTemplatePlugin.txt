@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" date="1527753803" format="1.1" version="1"}%
+%META:TOPICINFO{author="ProjectContributor" date="1573546151" format="1.1" version="1"}%
 ---+ <nop>%TOPIC%
 %FORMFIELD{"Description"}%
 
@@ -168,7 +168,6 @@ will be displayed using the =<nop>Applications.TaskApp.ItemViewTemplate=
 The following settings can be defined in configure
 
 | *Setting* | *Description* | *Default* |
-| {Plugins}{AutoTemplatePlugin}{Debug} | Turn on debugging by turning this on | Default: On |
 | {Plugins}{AutoTemplatePlugin}{Override} | Form defined templates override VIEW_TEMPLATE and EDIT_TEMPLATE settings | Default: Off |
 | {Plugins}{AutoTemplatePlugin}{Mode} | A priority list of strategies the plugin uses for defining templates. <br /> \
                                            =exist= for deriving the template name from the form name <br /> \
@@ -187,6 +186,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  12 Nov 2019: | OO-rewrite and performance tweaks |
 |  11 Jun 2018: | add =type= rule to default config |
 |  31 May 2018: | wrong template derived under certain conditions |
 |  25 May 2018: | added "type" rule |
@@ -221,7 +221,7 @@ The following settings can be defined in configure
 %META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/AutoTemplatePlugin"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2018, Oliver Kr&uuml;ger, Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2019, Oliver Kr&uuml;ger, Michael Daum"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%25TOPIC%25"}%

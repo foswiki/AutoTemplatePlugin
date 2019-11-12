@@ -2,10 +2,6 @@
 # ---++ AutoTemplatePlugin
 # This is the configuration used by the <b>AutoTemplatePlugin</b>.
 
-# **BOOLEAN LABEL="Debug"**
-# Turn on/off debugging in debug.txt
-$Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Debug} = 0;
-
 # **BOOLEAN LABEL="Override"**
 # Template defined by form overrides existing VIEW_TEMPLATE or EDIT_TEMPLATE settings
 $Foswiki::cfg{Plugins}{AutoTemplatePlugin}{Override} = 0;
