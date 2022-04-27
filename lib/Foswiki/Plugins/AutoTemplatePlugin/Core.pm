@@ -1,5 +1,5 @@
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2019 Foswiki Contributors
+# Copyright (C) 2008-2022 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -26,7 +26,7 @@ sub new {
   }, $class);
 
   $this->{templateExists} = {};
-  $this->{metaCache} = {};
+  $this->{metaCache} = {}; # SMELL: YAMC - yet another meta cache
   $this->{templateCache} = {};
 
   return $this;
@@ -45,15 +45,23 @@ sub setTemplateName {
 
   _writeDebug("called setTemplateName($web, $topic)");
 
+  my $request = Foswiki::Func::getRequestObject();
+  my $currentTemplate = $request->param("template");
+  return if $currentTemplate && !$this->{override};
+
   my $templateVar = _isEditAction() ? 'EDIT_TEMPLATE' : _isPrintAction() ? 'PRINT_TEMPLATE' : 'VIEW_TEMPLATE';
+  _writeDebug("templateVar=$templateVar");
 
   # back off if there is a view template already and we are not in override mode
-  my $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
-  return if $currentTemplate && !$this->{override};
-
-  my $request = Foswiki::Func::getRequestObject();
-  $currentTemplate = $request->param("template");
-  return if $currentTemplate && !$this->{override};
+  $currentTemplate = Foswiki::Func::getPreferencesValue($templateVar);
+  _writeDebug("currentTemplate=".($currentTemplate//'undef'));
+  if ($currentTemplate) {
+    if ($templateVar eq "PRINT_TEMPLATE") {
+      _setPreferenceName($templateVar, $currentTemplate);
+      return;
+    }
+    return unless $this->{override};
+  }
 
   # check if this is a new topic and - if so - try to derive the templateName from
   # the WebTopicEditTemplate
@@ -94,12 +102,18 @@ sub setTemplateName {
     }
   }
 
-  $templateVar =~ s/^PRINT_/VIEW_/g;    #sneak in VIEW again
+  _setPreferenceName($templateVar, $templateName);
+}
+
+sub _setPreferenceName {
+  my ($var, $name) = @_;
+
+  $var =~ s/^PRINT_/VIEW_/g;    #sneak in VIEW again
 
   if ($Foswiki::Plugins::VERSION >= 2.1) {
-    Foswiki::Func::setPreferencesValue($templateVar, $templateName);
+    Foswiki::Func::setPreferencesValue($var, $name);
   } else {
-    $Foswiki::Plugins::SESSION->{prefs}->pushPreferenceValues('SESSION', {$templateVar => $templateName});
+    $Foswiki::Plugins::SESSION->{prefs}->pushPreferenceValues('SESSION', {$var => $name});
   }
 }
 
@@ -174,7 +188,7 @@ sub getFormName {
 sub getTopicType {
   my ($this, $web, $topic, $meta) = @_;
 
-  $meta = $this->readTopic($web, $topic) unless defined $meta;
+  $meta //= $this->readTopic($web, $topic);
 
   my $topicType = $meta->get("FIELD", "TopicType");
   return unless $topicType;

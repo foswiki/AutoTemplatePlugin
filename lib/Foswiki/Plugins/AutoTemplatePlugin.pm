@@ -1,5 +1,5 @@
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2019 Foswiki Contributors
+# Copyright (C) 2008-2022 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -16,8 +16,8 @@ use warnings;
 use Foswiki::Func();
 use Foswiki::Plugins::AutoTemplatePlugin::Core();
 
-our $VERSION = '7.00';
-our $RELEASE = '12 Nov 2019';
+our $VERSION = '7.10';
+our $RELEASE = '27 Apr 2022';
 our $SHORTDESCRIPTION = 'Automatically sets VIEW_TEMPLATE, EDIT_TEMPLATE and PRINT_TEMPLATE';
 our $NO_PREFS_IN_TOPIC = 1;
 our $core;

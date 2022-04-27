@@ -186,6 +186,7 @@ The following settings can be defined in configure
 ---++ Change History
 
 %TABLE{columnwidths="7em" tablewidth="100%"}%
+|  27 Apr 2022: | backwards compatibility setting the actual template |
 |  12 Nov 2019: | OO-rewrite and performance tweaks |
 |  11 Jun 2018: | add =type= rule to default config |
 |  31 May 2018: | wrong template derived under certain conditions |
@@ -221,7 +222,7 @@ The following settings can be defined in configure
 %META:FIELD{name="Release" title="Release" value="%25$RELEASE%25"}%
 %META:FIELD{name="Description" title="Description" value="%25$SHORTDESCRIPTION%25"}%
 %META:FIELD{name="Repository" title="Repository" value="https://github.com/foswiki/AutoTemplatePlugin"}%
-%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2019, Oliver Kr&uuml;ger, Michael Daum"}%
+%META:FIELD{name="Copyright" title="Copyright" value="&copy; 2008-2022, Oliver Kr&uuml;ger, Michael Daum"}%
 %META:FIELD{name="License" title="License" value="GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]])"}%
 %META:FIELD{name="Home" title="Home" value="Foswiki:Extensions/%25TOPIC%25"}%
 %META:FIELD{name="Support" title="Support" value="Foswiki:Extensions/%25TOPIC%25"}%
