@@ -1,5 +1,5 @@
 # Copyright (C) 2008 Oliver Krueger <oliver@wiki-one.net>
-# Copyright (C) 2008-2022 Foswiki Contributors
+# Copyright (C) 2008-2024 Foswiki Contributors
 # All Rights Reserved.
 #
 # This program is distributed in the hope that it will be useful,
@@ -32,7 +32,7 @@ sub new {
   return $this;
 }
 
-sub DESTROY {
+sub finish {
   my $this = shift;
 
   undef $this->{templateExists};
@@ -106,14 +106,14 @@ sub setTemplateName {
 }
 
 sub _setPreferenceName {
-  my ($var, $name) = @_;
+  my ($var, $val) = @_;
 
   $var =~ s/^PRINT_/VIEW_/g;    #sneak in VIEW again
 
   if ($Foswiki::Plugins::VERSION >= 2.1) {
-    Foswiki::Func::setPreferencesValue($var, $name);
+    Foswiki::Func::setPreferencesValue($var, $val);
   } else {
-    $Foswiki::Plugins::SESSION->{prefs}->pushPreferenceValues('SESSION', {$var => $name});
+    $Foswiki::Plugins::SESSION->{prefs}->pushPreferenceValues('SESSION', {$var => $val});
   }
 }
 
